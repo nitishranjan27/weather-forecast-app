@@ -8,6 +8,14 @@ This is a weather forecast application built with HTML, CSS, and JavaScript. It 
 - View extended 5-day forecast
 - Recent searches dropdown
 
+
+## Technologies Used
+
+- HTML
+- CSS (Tailwind CSS)
+- JavaScript
+- OpenWeatherMap API
+
 ## Setup
 Clone the repository:
 ```bash
