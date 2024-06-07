@@ -1,3 +1,94 @@
+/* Importing Tailwind CSS base, components, and utilities */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Custom styles and animations */
+body {
+    font-family: 'Arial', sans-serif; /* Set the font family for the body */
+}
+
+#app {
+    max-width: 600px; /* Limit the maximum width of the app container */
+    margin: 0 auto; /* Center the app container */
+}
+
+#weather-display, #forecast-display {
+    margin-top: 20px; /* Add some space at the top of weather and forecast displays */
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0; /* Start with invisible */
+    }
+    to {
+        opacity: 1; /* End with fully visible */
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 2s ease-in-out; /* Apply fade-in animation */
+}
+
+@keyframes gradient-shadow {
+    /* Define color changes for gradient shadow animation */
+    0% {
+        color: #91a52c; /* Dark blue */
+        text-shadow: 0 0 10px rgba(44, 62, 80, 0.5); /* Dark blue shadow */
+    }
+    25% {
+        color: #b99329; /* Blue */
+        text-shadow: 0 0 10px rgba(185, 156, 41, 0.5); /* Blue shadow */
+    }
+    50% {
+        color: #ffffff; /* White */
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.5); /* White shadow */
+    }
+    75% {
+        color: #dba934; /* Light blue */
+        text-shadow: 0 0 10px rgba(219, 174, 52, 0.5); /* Light blue shadow */
+    }
+    100% {
+        color: #79a016; /* Dark green */
+        text-shadow: 0 0 10px rgba(119, 160, 22, 0.5); /* Dark green shadow */
+    }
+}
+
+.animate-gradient-shadow {
+    animation: gradient-shadow 5s infinite alternate; /* Apply gradient shadow animation */
+}
+
+.line::before {
+    content: '';
+    position: absolute;
+    top: 0px;
+    left: 50%;
+    width: 100px;
+    height: 5px;
+    background-color: white;
+    transform: translateX(-50%);
+    animation: line-expand 2.5s ease-out infinite; /* Apply line expand animation */
+}
+
+@keyframes line-expand {
+    0%, 100% {
+        width: 0; /* Start and end with no width */
+    }
+    50% {
+        width: 100px; /* Expand to 100px width at midpoint */
+    }
+}
+
+.error {
+    background-color: #912626; /* Red background for error messages */
+    padding: 56px; /* Add padding around error messages */
+}
+
+.mbt {
+    margin-bottom: 8px; /* Add margin to the bottom */
+}
+
+.datebold {
+    text-align: start; /* Align text to the start (left) */
+    font-weight: 600; /* Make the text bold */
+}
