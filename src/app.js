@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (city) {
             getWeather(city); // Fetch current weather for the entered city
             getExtendedForecast(city); // Fetch forecast weather for the entered city
+            updateRecentlySearchedCities(city); // Update the list of recently searched cities
         }
     });
 
@@ -24,11 +25,13 @@ document.addEventListener("DOMContentLoaded", () => {
 // Function to get current weather for a city
 async function getWeather(city) {
     try {
+        if (!city) throw new Error('Please enter a city name'); // Check if city name is entered
         const response = await fetch(`${apiUrl}?q=${city}&appid=${apiKey}&units=metric`); // Fetch weather data
         if (!response.ok) throw new Error('City not found'); // Handle city not found error
         const data = await response.json();
         displayWeather(data); // Display weather data
     } catch (error) {
+        clearWeatherDisplay(); // Clear previous weather data
         displayError(error.message); // Display error message
     }
 }
@@ -61,10 +64,11 @@ async function getExtendedForecast(city) {
 
 // Function to display current weather data
 function displayWeather(data) {
+    clearWeatherDisplay(); // Clear previous weather data
     const weatherDisplay = document.getElementById('weather-display');
     weatherDisplay.innerHTML = `
         <div class="bg-gradient-to-r from-green-400 via-blue-400 to-purple-400 p-8 rounded-lg shadow-md transform transition duration-500 hover:scale-105">
-            <h2 class="text-4xl font-extrabold mb-6">${data.name}</h2>
+            <h2 class="text-4xl font-extrabold mb-6" style="margin-bottom: 0.5rem;">${data.name}</h2>
             <p class="text-2xl">🌡️ Temperature: ${data.main.temp}°C</p>
             <p class="text-2xl">💧 Humidity: ${data.main.humidity}%</p>
             <p class="text-2xl">💨 Wind Speed: ${data.wind.speed} m/s</p>
@@ -93,10 +97,62 @@ function displayForecast(data) {
 
 // Function to display error messages
 function displayError(message) {
-    const weatherDisplay = document.getElementById('weather-display');
-    weatherDisplay.innerHTML = `
-        <div class="bg-red-500 error text-white p-4 rounded-lg shadow-lg">
+    const errorDisplay = document.getElementById('weather-display');
+    errorDisplay.innerHTML = `
+        <div class=" bg-red-500 error text-white p-4 rounded-lg shadow-lg">
             <p class="font-bold">${message}</p>
         </div>
     `;
 }
+
+// Function to clear current weather display
+function clearWeatherDisplay() {
+    document.getElementById('weather-display').innerHTML = '';
+}
+
+// Function to clear forecast display
+function clearForecastDisplay() {
+    document.getElementById('forecast-display').innerHTML = '';
+}
+
+// Function to update the list of recently searched cities
+function updateRecentlySearchedCities(city) {
+    let cities = JSON.parse(localStorage.getItem('recentCities')) || []; // Get recent cities from local storage
+    if (!cities.includes(city)) {
+        cities.push(city); // Add new city to the list
+        localStorage.setItem('recentCities', JSON.stringify(cities)); // Save updated list to local storage
+        updateCityDropdown(cities); // Update the city dropdown with the new list
+    }
+}
+
+// Function to update the city dropdown with recent searches
+function updateCityDropdown(cities) {
+    const dropdown = document.getElementById('city-dropdown');
+    if (!dropdown) {
+        // Create a new dropdown if it doesn't exist
+        const newheading = document.createElement('p');
+        newheading.innerHTML = `<h2 class="text-xl font-extrabold text-start mt-4 ">Recent Search</h2>`;
+        const newDropdown = document.createElement('select');
+        newDropdown.id = 'city-dropdown';
+        newDropdown.classList.add('p-3', 'border', 'rounded-lg', 'w-full', 'bg-indigo-500', 'hover:bg-indigo-300', 'transition', 'duration-300');
+        newDropdown.addEventListener('change', (event) => {
+            const city = event.target.value;
+            if (city) {
+                getWeather(city); // Fetch weather for selected city
+                getExtendedForecast(city); // Fetch forecast for selected city
+            }
+        });
+        document.getElementById('app').appendChild(newheading); // Add the heading to the app
+        document.getElementById('app').appendChild(newDropdown); // Add the new dropdown to the app
+    }
+    const dropdownElement = document.getElementById('city-dropdown');
+    dropdownElement.innerHTML = cities.map(city => `<option value="${city}">${city}</option>`).join(''); // Populate the dropdown with cities
+}
+
+// Load recently searched cities on page load
+document.addEventListener('DOMContentLoaded', () => {
+    const cities = JSON.parse(localStorage.getItem('recentCities')) || [];
+    if (cities.length > 0) {
+        updateCityDropdown(cities); // Update the city dropdown if there are recent searches
+    }
+});
