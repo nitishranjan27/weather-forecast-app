@@ -12,6 +12,12 @@ document.addEventListener("DOMContentLoaded", () => {
             getWeather(city); // Fetch current weather for the entered city
         }
     });
+
+    // Fetch current location weather using geolocation API
+    navigator.geolocation.getCurrentPosition((position) => {
+    const { latitude, longitude } = position.coords;
+    getWeatherByLocation(latitude, longitude); // Fetch weather based on current location
+    });
 });
 
 // Function to get current weather for a city
@@ -22,6 +28,19 @@ async function getWeather(city) {
         const data = await response.json();
         displayWeather(data); // Display weather data
     } catch (error) {
+        displayError(error.message); // Display error message
+    }
+}
+
+// Function to get current weather based on location
+async function getWeatherByLocation(lat, lon) {
+    try {
+        const response = await fetch(`${apiUrl}?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`); // Fetch weather data
+        if (!response.ok) throw new Error('Location not found'); // Handle location not found error
+        const data = await response.json();
+        displayWeather(data); // Display weather data
+    } catch (error) {
+        clearWeatherDisplay(); // Clear previous weather data
         displayError(error.message); // Display error message
     }
 }
